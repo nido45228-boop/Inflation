@@ -1,0 +1,137 @@
+<html>
+
+<head>
+  <title>Express</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>雲端機票管家</h1>
+    
+    <section>
+      <h2>新增機票資料</h2>
+      <form id="ticketForm">
+        <div>
+          <label for="year">年份：</label>
+          <input type="number" id="year" name="year" required>
+        </div>
+        <div>
+          <label for="destination">目的地：</label>
+          <input type="text" id="destination" name="destination" required>
+        </div>
+        <div>
+          <label for="price">價格：</label>
+          <input type="text" id="price" name="price" required placeholder="例如: $10,000">
+        </div>
+        <button type="submit">送出</button>
+      </form>
+      <p id="responseMessage"></p>
+    </section>
+  
+    <hr>
+  
+    <section>
+      <h2>所有機票資料</h2>
+      <input type="text" id="searchInput" placeholder="輸入關鍵字搜尋..." style="margin-bottom: 10px; width: 250px;">
+      <table border="1" id="ticketTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>年份</th>
+            <th>目的地</th>
+            <th>價格</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 資料將由 JavaScript 填入 -->
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    let allTickets = []; // 儲存所有機票資料
+
+
+    // 獲取所有機票並顯示在表格中
+    async function fetchTickets() {
+      try {
+        const response = await fetch('/api/tickets');
+        const result = await response.json();
+        
+        if (result.message === 'success') {
+          allTickets = result.data;
+          renderTable(allTickets);
+        }
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      }
+    }
+
+    // 渲染表格
+    function renderTable(tickets) {
+      const tbody = document.querySelector('#ticketTable tbody');
+      tbody.innerHTML = '';
+      if (tickets.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">沒有符合條件的資料</td></tr>';
+        return;
+      }
+      tickets.forEach(ticket => {
+        const row = `<tr>
+          <td>${ticket.id}</td>
+          <td>${ticket.year}</td>
+          <td>${ticket.destination}</td>
+          <td><span class="badge">${ticket.price}</span></td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    // 處理表單送出
+    document.getElementById('ticketForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const year = document.getElementById('year').value;
+      const destination = document.getElementById('destination').value;
+      const price = document.getElementById('price').value;
+      const responseMessage = document.getElementById('responseMessage');
+
+      try {
+        const url = `/api/insert?year=${encodeURIComponent(year)}&destination=${encodeURIComponent(destination)}&price=${encodeURIComponent(price)}`;
+        
+        const res = await fetch(url);
+        const result = await res.json();
+
+        if (result.message === 'success') {
+          responseMessage.innerText = `成功新增：ID ${result.data.id}`;
+          responseMessage.style.color = 'green';
+          fetchTickets(); // 重新整理列表
+          document.getElementById('ticketForm').reset();
+        } else {
+          responseMessage.innerText = `錯誤：${result.error}`;
+          responseMessage.style.color = 'red';
+        }
+      } catch (error) {
+        responseMessage.innerText = '發送請求時發生錯誤';
+        responseMessage.style.color = 'red';
+      }
+    });
+
+    // 監聽搜尋框輸入
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredTickets = allTickets.filter(ticket => {
+        return ticket.year.toString().includes(searchTerm) ||
+               ticket.destination.toLowerCase().includes(searchTerm) ||
+               ticket.price.toLowerCase().includes(searchTerm);
+      });
+      renderTable(filteredTickets);
+    });
+
+    // 初始載入
+    fetchTickets();
+  </script>
+</body>
+
+</html>

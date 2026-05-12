@@ -1,0 +1,115 @@
+:root {
+  --brand-primary: #007BFF;
+  --color-background: #F8F9FA;
+  --color-text: #212529;
+  --color-text-muted: #6C757D;
+  --font-family-sans: "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: "SF Mono", "Fira Code", "Courier New", monospace;
+  --spacing-unit: 8px;
+}
+
+body {
+  padding: calc(var(--spacing-unit) * 4);
+  font-family: var(--font-family-sans);
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+a {
+  color: var(--brand-primary);
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: calc(var(--spacing-unit) * 2);
+  background-color: #FFFFFF;
+  border-radius: var(--spacing-unit);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+h1 {
+  font-family: var(--font-family-sans);
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: calc(var(--spacing-unit) * 3);
+  text-align: center;
+  color: var(--brand-primary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: calc(var(--spacing-unit) * 4);
+  color: var(--color-text-muted);
+}
+
+input[type="text"],
+input[type="number"] {
+  padding: var(--spacing-unit);
+  border: 1px solid #CED4DA;
+  border-radius: calc(var(--spacing-unit) / 2);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: var(--brand-primary);
+  outline: 0;
+}
+
+.btn {
+  padding: var(--spacing-unit) calc(var(--spacing-unit) * 2);
+  border: 1px solid transparent;
+  border-radius: calc(var(--spacing-unit) / 2);
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.btn--primary {
+  background-color: var(--brand-primary);
+  color: #FFFFFF;
+}
+
+.btn--primary:hover {
+  opacity: 0.85;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: calc(var(--spacing-unit) * 2);
+}
+
+th, td {
+  padding: calc(var(--spacing-unit) * 1.5);
+  text-align: left;
+  border-bottom: 1px solid #DEE2E6;
+}
+
+thead th {
+  border-top: 2px solid #DEE2E6;
+  border-bottom-width: 2px;
+  color: var(--color-text-muted);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: rgba(0,0,0,0.02);
+}
+
+.badge {
+  display: inline-block;
+  padding: .35em .65em;
+  font-size: .75em;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-text);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25rem;
+  background-color: #E9ECEF;
+  font-family: var(--font-family-mono);
+}
