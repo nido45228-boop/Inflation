@@ -30,6 +30,17 @@
     </section>
   
     <hr>
+
+    <section>
+      <h2>自動爬取工具</h2>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <input type="url" id="scrapeUrl" placeholder="貼上要爬取的網址 ..." style="flex: 1; padding: 10px;">
+        <button id="scrapeBtn" style="padding: 10px 20px;">開始爬取</button>
+      </div>
+      <p id="scrapeStatus" style="font-size: 0.9em; margin-top: 5px;"></p>
+    </section>
+
+    <hr>
   
     <section>
       <h2>所有機票資料</h2>
@@ -115,6 +126,42 @@
       } catch (error) {
         responseMessage.innerText = '發送請求時發生錯誤';
         responseMessage.style.color = 'red';
+      }
+    });
+
+    // 處理爬蟲按鈕點擊
+    document.getElementById('scrapeBtn').addEventListener('click', async () => {
+      const url = document.getElementById('scrapeUrl').value;
+      const status = document.getElementById('scrapeStatus');
+      const btn = document.getElementById('scrapeBtn');
+
+      if (!url) {
+        status.innerText = '請先輸入網址！';
+        status.style.color = 'red';
+        return;
+      }
+
+      try {
+        status.innerText = '正在爬取資料中，請稍候...';
+        status.style.color = 'var(--text-color)';
+        btn.disabled = true;
+
+        const res = await fetch(`/api/scrape?url=${encodeURIComponent(url)}`);
+        const result = await res.json();
+
+        if (res.ok) {
+          status.innerText = result.message;
+          status.style.color = 'green';
+          fetchTickets(); // 重新載入列表以顯示新抓到的資料
+        } else {
+          status.innerText = `失敗：${result.message || result.error}`;
+          status.style.color = 'red';
+        }
+      } catch (error) {
+        status.innerText = '連線至伺服器時發生錯誤';
+        status.style.color = 'red';
+      } finally {
+        btn.disabled = false;
       }
     });
 
